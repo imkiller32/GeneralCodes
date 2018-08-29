@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
+#define inf INT_MAX
 using namespace std;
 
-//Make_Heap()
 //Insert(H,x)
 //Minimum(H)
 //Extract_Min(H)
@@ -189,10 +189,80 @@ void printHeap(list<Node*> heap)
 	}
 }
 
+void findInRoot(Node *root,int key,Node *&temp)
+{
+	while(root!=NULL)
+	{
+		if(root->data==key)
+		{
+			temp=root;
+			return;
+		}
+		findInRoot(root->child,key,temp);
+		root=root->sibling;
+	}
+	return;
+}
+
+void find(list<Node*> heap,int key,Node *&temp)
+{
+	list<Node*> :: iterator it;
+	it=heap.begin();
+	while( it!=heap.end() )
+	{
+		findInRoot(*it,key,temp);
+		if(temp!=NULL)
+		return;
+		it++;
+	}
+	return;
+}
+
+list<Node*> DecreaseKey(list<Node*> heap,int key,int val)
+{
+	Node *x=NULL;
+	find(heap,key,x);
+	if(x==NULL)
+	{
+		cout<<"Key Not Found in the heap\n";
+		return heap;
+	}
+	if(val>key)
+	{
+		cout<<"Value to update should be less than the original one\n";
+		return heap;
+	}
+	x->data=val;
+	Node *y=x;
+	Node *z=y->parent;
+	while( z!=NULL && z->data > y->data)
+	{
+		swap(z->data,y->data);
+		y=z;
+		z=y->parent;
+	}
+	cout<<"Done!\n";
+	return heap;
+}
+
+list<Node*> Delete(list<Node*> heap,int key)
+{
+	Node *temp=NULL;
+	find(heap,key,temp);
+	if(temp==NULL)
+	{
+		cout<<"Value Not Found\n";
+		return heap;
+	}
+	heap=DecreaseKey(heap,key,-1*inf);
+	heap=ExtractMin(heap);
+	return heap;
+}
+
 int main()
 {
 	list<Node*> heap;
-	int choice,key;
+	int choice,key,val;
 	while(1)
 	{
 		cout<<"\n1.Insert\n2.PrintHeap\n3.GetMin\n4.ExtractMin\n5.DecreaseKey\n6.Delete Key\n7.Exit\n";
@@ -219,15 +289,23 @@ int main()
 				cout<<"Minimum Key is Deleted.\n";
 				break;
 			case 5:
+				cout<<"Enter Key To change its value: ";
+				cin>>key;
+				cout<<"Enter New Value: ";
+				cin>>val;
+				heap=DecreaseKey(heap,key,val);
 				break;
 			case 6:
+				cout<<"Enter Value To Delete: ";
+				cin>>key;
+				heap=Delete(heap,key);
 				break;
 			case 7:
+				cout<<"\nThanks.\n";
 				return 0;
 			default:
 				cout<<"Invalid Entry\n";
 				break;
 		}
 	}
-	
 }
