@@ -1,7 +1,8 @@
 #include<bits/stdc++.h>
-#define inf INT_MAX
+#define inf 100
 using namespace std;
 
+//Make_Heap()
 //Insert(H,x)
 //Minimum(H)
 //Extract_Min(H)
